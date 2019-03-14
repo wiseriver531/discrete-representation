@@ -23,8 +23,7 @@ The analysis codes are written in MATLAB. Please refer to the below guidline:
 - 'fitting_simple' folder is for the model that has reduced number of parameters (Exp1: 8; Exp2&3: 12).
 - Run codes in order: 'step1_initial_parameter_fitting.m', 'step2_additional_parameter_fitting.m', and 'step3_test_fitting.m' (dir: '/codes/analysis/fitting_*/').
 - Step1 code will give initial parameter fitting result.
-- Step2 code will fit parameters starting from different inital parameter values, which are the results from previous fitting.
-- Step3 code will simulate and test the model fit using the best-fitted parameters.
+- Step2 code will generate more parameter fitting result using different initial parameter set.
 - The entire procedure will take a few hours to run on a "normal" computer.
 
 If you have any questions, write to Jiwon Yeon at j.yeon@gatech.edu or wiseriveer531@gmail.com
