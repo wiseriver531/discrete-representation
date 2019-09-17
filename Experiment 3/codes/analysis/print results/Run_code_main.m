@@ -8,7 +8,7 @@
 % want to check the results of the simple version analysis (i.e., with
 % fewer parameters) type 'simple' for the 'version' variable. 
 %
-% Written by Jiwon Yeon, last edited Jan.23.2019.
+% Written by Jiwon Yeon, last edited Sep.14.2019.
 % ------------------------------------------------------------------------
 clear all, clc
 version = 'extended';   % 'extended' or 'simple'
@@ -34,47 +34,46 @@ summary_strategic.acc.answer1 = accuracy_cond1;
 summary_strategic.acc.answer2 = accuracy_cond2;
 summary_strategic.resfit = resfit;
 
-% Accuracy
+
+%% Accuracy
+% 1st choice
+RowNames = {'Accuracy'};
+Observed = {round(mean(observed.answer1),3)};
+Population = {round(mean(population.acc.answer1),3)};
+Summary_Random = {round(mean(summary_random.acc.answer1),3)};
+Summary_Strategic = {round(mean(summary_strategic.acc.answer1),3)};
+Prediction_1st_answer = table(Observed,Population,Summary_Random,Summary_Strategic,...
+    'RowNames', RowNames)
+
+% 2nd choice
+RowNames = {'Accuracy'; 'p-val(vs. Observed)'; 't-val(vs. Observed)'};
 Observed = {round(mean(observed.answer2),3); []; []};
 [h p ci stats] = ttest(observed.answer2, population.acc.answer2);
-Population = {round(mean(population.acc.answer2),3); p; round(abs(stats.tstat),3)};
+Population = {round(mean(population.acc.answer2),3); p; abs(round((stats.tstat),3))};
 [h p ci stats] = ttest(observed.answer2, summary_random.acc.answer2);
-Summary_Random = {round(mean(summary_random.acc.answer2),3); p; round(abs(stats.tstat),3)};
+Summary_Random = {round(mean(summary_random.acc.answer2),3); p; abs(round((stats.tstat),3))};
 [h p ci stats] = ttest(observed.answer2, summary_strategic.acc.answer2);
-Summary_Strategic = {round(mean(summary_strategic.acc.answer2),3); p; round(abs(stats.tstat),3)};
-
-RowNames = {'Accuracy'; 't-val(vs. Observed)'; 'p-val(vs. Observed)'};
-Prediction_2alternative = table(Observed,Population,Summary_Random,Summary_Strategic,...
+Summary_Strategic = {round(mean(summary_strategic.acc.answer2),3); p; abs(round((stats.tstat),3))};
+Prediction_2nd_answer = table(Observed,Population,Summary_Random,Summary_Strategic,...
     'RowNames', RowNames)
 
 
-% AIC comparisons
+%% AIC comparisons
 for sub = 1:length(observed.answer2)
     AIC.population(sub) = population.resfit{sub}.AIC;    
     AIC.summary_random(sub) = summary_random.resfit{sub}.AIC;
     AIC.summary_strategic(sub) = summary_strategic.resfit{sub}.AIC;
 end
 
-% Compare AIC_Average
 output = AICanalysis([mean(AIC.population) mean(AIC.summary_random)],'e');
-output = [output; AICanalysis([mean(AIC.population) mean(AIC.summary_strategic)],'e')];    
-Population = {output(1,1); output(2,1)};
-
-output = AICanalysis([mean(AIC.summary_random) mean(AIC.summary_strategic)],'e');
-Summary_Random = {[]; output(1,1)};
-
-RowNames = {'Summary_Random vs.'; 'Summary_Strategic vs.'};
-AIC_comparison_Average = table(Population, Summary_Random,'RowNames', RowNames)
-
-
-% Compare AIC_Average
+Average_sum_random = [mean(AIC.population)-mean(AIC.summary_random);output(1,1)];
 output = AICanalysis([sum(AIC.population) sum(AIC.summary_random)],'e');
-output = [output; AICanalysis([sum(AIC.population) sum(AIC.summary_strategic)],'e')];    
-Population = {output(1,1); output(2,1)};
+Total_sum_random = [sum(AIC.population)-sum(AIC.summary_random); output(1,1)];
 
-output = AICanalysis([sum(AIC.summary_random) sum(AIC.summary_strategic)],'e');
-Summary_Random = {[]; output(1,1)};
+output = AICanalysis([mean(AIC.population) mean(AIC.summary_strategic)],'e');
+Average_sum_strategic = [mean(AIC.population)-mean(AIC.summary_strategic);output(1,1)];
+output = AICanalysis([sum(AIC.population) sum(AIC.summary_strategic)],'e');
+Total_sum_strategic = [sum(AIC.population)-sum(AIC.summary_strategic); output(1,1)];
 
-RowNames = {'Summary_Random vs.'; 'Summary_Strategic vs.'};
-AIC_comparison_Total = table(Population, Summary_Random,'RowNames', RowNames)
-
+AIC_comparison_Population_vs_Summary = table(Average_sum_random, Total_sum_random, Average_sum_strategic, ...
+    Total_sum_strategic, 'RowNames', {'Difference', 'Evidence ratio'})
