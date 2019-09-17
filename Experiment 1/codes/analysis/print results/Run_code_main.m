@@ -8,14 +8,13 @@
 % want to check the results of the simple version analysis (i.e., with
 % fewer parameters) type 'simple' for the 'version' variable. 
 %
-% Written by Jiwon Yeon, last edited Jan.22.2019.
+% Written by Jiwon Yeon, last edited Sep.14.2019.
 % ------------------------------------------------------------------------
 clear all, clc
 version = 'extended';   % 'extended' or 'simple'
 
-
 %% load, organize, test, and print data
-folderName = ['fitting results/modeling_' version];
+folderName = ['fitting results/' version];
 dataPath = [fileparts(fileparts(fileparts(pwd))) '/data/'];
 load([dataPath '/subject_responses/dataForModeling'])
 observed.alternative4 = data.accuracy(:,1);
@@ -31,51 +30,34 @@ summary.acc.alternative4 = accuracy_cond1;
 summary.acc.alternative2 = accuracy_cond2;
 summary.resfit = resfit;
 
-load([dataPath folderName '/twohighest_' version '.mat'])
-twohighest.acc.alternative4 = accuracy_cond1;
-twohighest.acc.alternative2 = accuracy_cond2;
-twohighest.resfit = resfit;
+%% Accuracy
+% 4-alternative
+RowNames = {'Accuracy'};
+Observed = {round(mean(observed.alternative4),3)};
+Population = {round(mean(population.acc.alternative4),3)};
+Summary = {round(mean(summary.acc.alternative4),3)};
+Prediction_4alternative = table(Observed,Population,Summary,...
+    'RowNames', RowNames)
 
-% Accuracy
+% 2-alternative
+RowNames = {'Accuracy'; 'p-val(vs. Observed)'; 't-val(vs. Observed)'};
 Observed = {round(mean(observed.alternative2),3); []; []};
 [h p ci stats] = ttest(observed.alternative2, population.acc.alternative2);
 Population = {round(mean(population.acc.alternative2),3); p; round(abs(stats.tstat),3)};
 [h p ci stats] = ttest(observed.alternative2, summary.acc.alternative2);
 Summary = {round(mean(summary.acc.alternative2),3); p; round(abs(stats.tstat),3)};
-[h p ci stats] = ttest(observed.alternative2, twohighest.acc.alternative2);
-TwoHighest = {round(mean(twohighest.acc.alternative2),3); p; round(abs(stats.tstat),3)};
-
-RowNames = {'Accuracy'; 't-val(vs. Observed)'; 'p-val(vs. Observed)'};
-Prediction_2alternative = table(Observed,Population,Summary,TwoHighest,...
+Prediction_2alternative = table(Observed,Population,Summary,...
     'RowNames', RowNames)
 
 
-% AIC comparisons
+%% AIC comparisons
 for sub = 1:length(observed.alternative2)
     AIC.population(sub) = population.resfit{sub}.AIC;    
-    AIC.summary(sub) = summary.resfit{sub}.AIC;
-    AIC.twohighest(sub) = twohighest.resfit{sub}.AIC;
+    AIC.summary(sub) = summary.resfit{sub}.AIC; 
 end
 
-% Compare AIC_Average
 output = AICanalysis([mean(AIC.population) mean(AIC.summary)],'e');
-output = [output; AICanalysis([mean(AIC.population) mean(AIC.twohighest)],'e')];
-Population = {output(1,1); output(2,1)};
-
-output = AICanalysis([mean(AIC.twohighest) mean(AIC.summary)],'e');
-TwoHighest = {output(1,1); []};
-
-RowNames = {'Summary vs.'; 'TwoHighest vs.'};
-AIC_comparison_Average = table(Population, TwoHighest, 'RowNames', RowNames)
-
-
-% Compare AIC_Total
+Average = [mean(AIC.population)-mean(AIC.summary);output(1,1)];
 output = AICanalysis([sum(AIC.population) sum(AIC.summary)],'e');
-output = [output; AICanalysis([sum(AIC.population) sum(AIC.twohighest)],'e')];
-Population = {output(1,1); output(2,1)};
-
-output = AICanalysis([sum(AIC.twohighest) sum(AIC.summary)],'e');
-TwoHighest = {output(1,1); []};
-
-RowNames = {'Summary vs.'; 'TwoHighest vs.'};
-AIC_comparison_Total = table(Population, TwoHighest, 'RowNames', RowNames)
+Total = [sum(AIC.population)-sum(AIC.summary); output(1,1)];
+AIC_comparison_Population_vs_Summary = table(Average, Total, 'RowNames', {'Difference', 'Evidence ratio'})
