@@ -1,4 +1,4 @@
-# Discrete-representation
+# Data and code for the manuscript "The nature of the perceptual representation for decision making"
 
 The analysis codes are written in MATLAB. Please refer to the below guidline:
 
@@ -11,16 +11,16 @@ The analysis codes are written in MATLAB. Please refer to the below guidline:
 - Set the current directory in MATLAB to where the running code is located.
 
 @ Instructions for use
-- Three experiments data are saved in separate folders.
-- Under each experiment folder, 'codes' folder contains m-files for running model fitting and 'data' folder contains behavioral raw data ('subject_responses' folder) and model fitting outputs ('fitting results' folder). 
+- Four experiments data are saved in separate folders.
+- Under each experiment folder, 'codes' folder contains m-files for running model fitting and 'data' folder contains behavioral raw data ('subj ect_responses' folder) and model fitting outputs ('fitting results' folder). 
 - 'behavioral_data_cleanup.m' file (dir: '/codes/analysis/organize behavioral responses/') outputs 'dataForModeling.mat'. To run model fitting, 'dataForModeling.mat' file is needed.
-- To check final outputs from already saved fitting results, run 'Run_code.m' file (dir: '/codes/analysis/print results/'.
+- To check final outputs from already saved fitting results, run 'Run_code*.m' file (dir: '/codes/analysis/print results/'.
 - To check instructions for reproduction, please read 'License' file. 
 
 @ Demo
 - To check the model fitting process from the beginning, first make sure to have 'dataForModeling.mat' file under '/data/subject_responses/' directory
-- 'fitting_extended' folder is for the model that has more number of parameters (Exp1: 12; Exp2&3: 30).
-- 'fitting_simple' folder is for the model that has reduced number of parameters (Exp1: 8; Exp2&3: 12).
+- For Experiment 1-3, 'fitting_extended' folder is for the model that has more number of parameters (Exp1: 12; Exp2&3: 30).
+- For Experiment 1-3, 'fitting_simple' folder is for the model that has reduced number of parameters (Exp1: 8; Exp2&3: 12).
 - Run codes in order: 'step1_initial_parameter_fitting.m', 'step2_additional_parameter_fitting.m', and 'step3_test_fitting.m' (dir: '/codes/analysis/fitting_*/').
 - Step1 code will give initial parameter fitting result.
 - Step2 code will generate more parameter fitting result using different initial parameter set.
